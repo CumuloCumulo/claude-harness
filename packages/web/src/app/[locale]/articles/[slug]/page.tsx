@@ -10,8 +10,16 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const articles = await getArticleList("en");
-  return articles.map((a) => ({ slug: a.slug }));
+  const slugs = new Set<string>();
+  for (const locale of ["en", "zh", "ja"]) {
+    try {
+      const articles = await getArticleList(locale);
+      for (const a of articles) slugs.add(a.slug);
+    } catch {
+      // locale dir may not exist
+    }
+  }
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export default async function ArticlePage({ params }: Props) {
