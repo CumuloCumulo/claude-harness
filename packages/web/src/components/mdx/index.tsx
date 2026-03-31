@@ -43,10 +43,10 @@ function extractText(node: React.ReactNode): string {
 
 function Table({ children, ...props }: React.ComponentProps<"table">) {
   return (
-    <div className="my-6 overflow-x-auto rounded-lg border border-[var(--border)]">
+    <div className="not-prose my-6 overflow-x-auto rounded-lg border border-[var(--border)]">
       <table
         {...props}
-        className="m-0 w-full border-collapse text-sm"
+        className="w-full text-sm"
       >
         {children}
       </table>
@@ -56,7 +56,7 @@ function Table({ children, ...props }: React.ComponentProps<"table">) {
 
 function Thead({ children, ...props }: React.ComponentProps<"thead">) {
   return (
-    <thead {...props} className="bg-[#1a1a1a] text-left text-xs uppercase tracking-wider text-neutral-400">
+    <thead {...props} className="border-b border-[var(--border)] bg-[#141414]">
       {children}
     </thead>
   );
@@ -64,7 +64,7 @@ function Thead({ children, ...props }: React.ComponentProps<"thead">) {
 
 function Th({ children, ...props }: React.ComponentProps<"th">) {
   return (
-    <th {...props} className="px-4 py-3 font-semibold">
+    <th {...props} className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">
       {children}
     </th>
   );
@@ -72,7 +72,7 @@ function Th({ children, ...props }: React.ComponentProps<"th">) {
 
 function Td({ children, ...props }: React.ComponentProps<"td">) {
   return (
-    <td {...props} className="border-t border-[var(--border)] px-4 py-3">
+    <td {...props} className="border-t border-[var(--border)] px-4 py-2 text-neutral-300">
       {children}
     </td>
   );
