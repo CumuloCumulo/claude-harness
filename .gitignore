@@ -1,0 +1,6 @@
+node_modules
+.next
+.turbo
+dist
+packages/web/generated
+.env*.local

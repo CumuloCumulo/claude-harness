@@ -1,0 +1,13 @@
+{
+  "name": "claude-harness",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "generate": "turbo generate"
+  },
+  "devDependencies": {
+    "turbo": "^2.9.0"
+  },
+  "packageManager": "pnpm@8.15.3"
+}
