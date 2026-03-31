@@ -206,8 +206,8 @@ flowchart TD
     E --> K["asSystemPrompt([...parts])"]
     K --> L[最终 System Prompt]
 
-    style E fill:#fff3e0
-    style L fill:#c8e6c9
+    style E fill:#3d2e1a,color:#e0e0e0
+    style L fill:#1a3d1e,color:#e0e0e0
 ```
 
 看看实际的代码如何实现这个组合：
@@ -683,12 +683,12 @@ flowchart TD
 
     B -->|用户中断| R[AbortController<br/>优雅终止]
 
-    style C2 fill:#c8e6c9
-    style E fill:#c8e6c9
-    style G2 fill:#c8e6c9
-    style I fill:#c8e6c9
-    style L fill:#c8e6c9
-    style O fill:#c8e6c9
+    style C2 fill:#1a3d1e,color:#e0e0e0
+    style E fill:#1a3d1e,color:#e0e0e0
+    style G2 fill:#1a3d1e,color:#e0e0e0
+    style I fill:#1a3d1e,color:#e0e0e0
+    style L fill:#1a3d1e,color:#e0e0e0
+    style O fill:#1a3d1e,color:#e0e0e0
 ```
 
 ### 避免死亡螺旋
@@ -818,8 +818,8 @@ flowchart TD
         R -.->|Result| U[最终响应<br/>含 usage/cost]
     end
 
-    style H fill:#fff3e0
-    style R fill:#c8e6c9
+    style H fill:#3d2e1a,color:#e0e0e0
+    style R fill:#1a3d1e,color:#e0e0e0
 ```
 
 ---
