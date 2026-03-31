@@ -3,6 +3,7 @@ import { getArticle, getArticleList } from "@/lib/articles";
 import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { mdxComponents } from "@/components/mdx";
+import remarkGfm from "remark-gfm";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -33,7 +34,11 @@ export default async function ArticlePage({ params }: Props) {
           <p className="text-lg text-neutral-400">{article.meta.description}</p>
         )}
       </header>
-      <MDXRemote source={article.content} components={mdxComponents} />
+      <MDXRemote
+        source={article.content}
+        components={mdxComponents}
+        options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+      />
     </article>
   );
 }
