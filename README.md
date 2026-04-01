@@ -40,37 +40,37 @@ Browse the full Claude Code source tree with a file explorer, syntax highlightin
 
 | # | Article |
 |---|---------|
-| 01 | The Big Picture: How a 512,000-Line AI CLI Is Built |
-| 02 | The Query Engine: The Complete Lifecycle of a Conversation |
-| 03 | The Tool System: How AI Safely Interacts with the Outside World |
-| 04 | The Streaming Tool Executor: How to Safely Let AI Operate Multiple Tools Simultaneously |
-| 05 | The Permission System: Walking the Tightrope Between Autonomy and Safety |
-| 06 | Context Management: When Even a Million Tokens Aren't Enough |
-| 07 | Startup Performance: How a Heavy CLI Achieves Fast Cold Starts |
-| 08 | Multi-Agent Orchestration: How the Coordinator Pattern Enables AI Collaboration |
-| 09 | Persistent Memory: How AI Remembers You Across Sessions |
-| 10 | Bridge System: Bidirectional Communication Architecture Between CLI and IDE |
-| 11 | MCP Protocol Integration: How AI Tools Connect to Everything |
-| 12 | Plugins and Skills: A Three-Layer Extensibility Architecture |
-| 13 | OAuth and Authentication: The Full Pipeline from Keychain to Token Refresh |
-| 14 | Terminal UI Framework: Building a CLI with React |
-| 15 | Keybindings and Vim Mode: Editor-Level Interaction in a CLI |
-| 16 | Screen System: Designing Fullscreen Interaction Modes |
-| 17 | State Management: React State Architecture Without Redux |
-| 18 | Telemetry and Observability: OpenTelemetry in a CLI Application |
-| 19 | Configuration System: Schema Validation, Migrations, and Multi-Source Merging |
-| 20 | Feature Flags and Conditional Compilation: The Art of Compile-Time Code Elimination |
-| 21 | The File Operations Trio: Design Philosophy of Read, Write, and Edit |
-| 22 | BashTool: Letting AI Safely Execute Shell Commands |
-| 23 | The Search System: The Glob + Grep + Full-Text Search Combination |
-| 24 | Web Tools: How AI Accesses the Internet |
-| 25 | LSP Integration: How Language Server Protocol Enhances AI Coding |
-| 26 | The Buddy System: A Virtual Pet Game Inside Your Codebase |
-| 27 | The Output Style System: Bringing Brand Identity to Terminal Output |
-| 28 | Remote Execution and Scheduled Triggers: The Headless AI Agent |
-| 29 | Session Management: Interruption, Resumption, and Sharing |
-| 30 | API Client: Deep Integration with the Anthropic API |
-| 31 | Error Handling and Self-Healing: How AI Recovers from Failures |
+| 01 | [The Big Picture: How a 512,000-Line AI CLI Is Built](./content/articles/en/01-overview.mdx) |
+| 02 | [The Query Engine: The Complete Lifecycle of a Conversation](./content/articles/en/02-query-engine.mdx) |
+| 03 | [The Tool System: How AI Safely Interacts with the Outside World](./content/articles/en/03-tool-system.mdx) |
+| 04 | [The Streaming Tool Executor: How to Safely Let AI Operate Multiple Tools Simultaneously](./content/articles/en/04-streaming-tool-executor.mdx) |
+| 05 | [The Permission System: Walking the Tightrope Between Autonomy and Safety](./content/articles/en/05-permission-system.mdx) |
+| 06 | [Context Management: When Even a Million Tokens Aren't Enough](./content/articles/en/06-context-management.mdx) |
+| 07 | [Startup Performance: How a Heavy CLI Achieves Fast Cold Starts](./content/articles/en/07-startup-performance.mdx) |
+| 08 | [Multi-Agent Orchestration: How the Coordinator Pattern Enables AI Collaboration](./content/articles/en/08-multi-agent.mdx) |
+| 09 | [Persistent Memory: How AI Remembers You Across Sessions](./content/articles/en/09-memory-system.mdx) |
+| 10 | [Bridge System: Bidirectional Communication Architecture Between CLI and IDE](./content/articles/en/10-bridge-system.mdx) |
+| 11 | [MCP Protocol Integration: How AI Tools Connect to Everything](./content/articles/en/11-mcp-integration.mdx) |
+| 12 | [Plugins and Skills: A Three-Layer Extensibility Architecture](./content/articles/en/12-plugins-skills.mdx) |
+| 13 | [OAuth and Authentication: The Full Pipeline from Keychain to Token Refresh](./content/articles/en/13-auth.mdx) |
+| 14 | [Terminal UI Framework: Building a CLI with React](./content/articles/en/14-terminal-ui.mdx) |
+| 15 | [Keybindings and Vim Mode: Editor-Level Interaction in a CLI](./content/articles/en/15-keybindings-vim.mdx) |
+| 16 | [Screen System: Designing Fullscreen Interaction Modes](./content/articles/en/16-screens.mdx) |
+| 17 | [State Management: React State Architecture Without Redux](./content/articles/en/17-state-management.mdx) |
+| 18 | [Telemetry and Observability: OpenTelemetry in a CLI Application](./content/articles/en/18-telemetry.mdx) |
+| 19 | [Configuration System: Schema Validation, Migrations, and Multi-Source Merging](./content/articles/en/19-config-system.mdx) |
+| 20 | [Feature Flags and Conditional Compilation: The Art of Compile-Time Code Elimination](./content/articles/en/20-feature-flags.mdx) |
+| 21 | [The File Operations Trio: Design Philosophy of Read, Write, and Edit](./content/articles/en/21-file-operations.mdx) |
+| 22 | [BashTool: Letting AI Safely Execute Shell Commands](./content/articles/en/22-bash-tool.mdx) |
+| 23 | [The Search System: The Glob + Grep + Full-Text Search Combination](./content/articles/en/23-search-system.mdx) |
+| 24 | [Web Tools: How AI Accesses the Internet](./content/articles/en/24-web-tools.mdx) |
+| 25 | [LSP Integration: How Language Server Protocol Enhances AI Coding](./content/articles/en/25-lsp-integration.mdx) |
+| 26 | [The Buddy System: A Virtual Pet Game Inside Your Codebase](./content/articles/en/26-buddy-system.mdx) |
+| 27 | [The Output Style System: Bringing Brand Identity to Terminal Output](./content/articles/en/27-output-styles.mdx) |
+| 28 | [Remote Execution and Scheduled Triggers: The Headless AI Agent](./content/articles/en/28-remote-execution.mdx) |
+| 29 | [Session Management: Interruption, Resumption, and Sharing](./content/articles/en/29-session-management.mdx) |
+| 30 | [API Client: Deep Integration with the Anthropic API](./content/articles/en/30-api-client.mdx) |
+| 31 | [Error Handling and Self-Healing: How AI Recovers from Failures](./content/articles/en/31-error-recovery.mdx) |
 
 ### Module Explorer
 
