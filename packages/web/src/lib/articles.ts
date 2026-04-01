@@ -6,20 +6,23 @@ import { existsSync } from "node:fs";
 
 function findArticlesBase(): string {
   const candidates = [
-    resolve(process.cwd(), "../../content/articles"),
-    resolve(process.cwd(), "content/articles"),
-    resolve(process.cwd(), "../content/articles"),
+    resolve(process.cwd(), "../../content/articles"),    // local dev from packages/web
+    resolve(process.cwd(), "content/articles"),           // Vercel runtime (/var/task)
+    resolve(process.cwd(), "../content/articles"),        // fallback
   ];
   for (const c of candidates) {
-    if (existsSync(c)) {
-      console.log(`[articles] Found articles at: ${c}`);
-      return c;
-    }
+    if (existsSync(c)) return c;
   }
-  console.error(`[articles] No articles directory found! cwd=${process.cwd()}, tried: ${candidates.join(", ")}`);
+  // Return first candidate as fallback
   return candidates[0];
 }
-const ARTICLES_BASE = findArticlesBase();
+
+// Don't cache at module load — evaluate lazily so cwd() is correct at call time
+let _articlesBase: string | null = null;
+function getArticlesBase(): string {
+  if (!_articlesBase) _articlesBase = findArticlesBase();
+  return _articlesBase;
+}
 
 export interface ArticleMeta {
   slug: string;
@@ -33,7 +36,7 @@ export interface ArticleMeta {
 }
 
 function getArticlesDir(locale: string): string {
-  return resolve(ARTICLES_BASE, locale);
+  return resolve(getArticlesBase(), locale);
 }
 
 export async function getArticleList(locale: string): Promise<ArticleMeta[]> {
@@ -71,7 +74,7 @@ export async function getArticle(slug: string, locale: string): Promise<{ meta: 
   let filePath = resolve(dir, `${slug}.mdx`);
 
   // Prevent path traversal
-  if (!filePath.startsWith(ARTICLES_BASE)) {
+  if (!filePath.startsWith(getArticlesBase())) {
     throw new Error("Invalid slug");
   }
 
