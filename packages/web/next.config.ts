@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/[locale]/articles/[slug]": ["../../content/articles/**/*.mdx"],
     "/[locale]/articles": ["../../content/articles/**/*.mdx"],
+    "/[locale]/code": ["../../packages/claude-code-source/src/**/*"],
   },
   serverExternalPackages: ["shiki"],
 };
