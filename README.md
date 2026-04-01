@@ -95,7 +95,7 @@ Full internationalization with English, Chinese (中文), and Japanese (日本�
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | [Next.js 15](https://nextjs.org/) (App Router) |
+| Framework | [Next.js 16](https://nextjs.org/) (App Router) |
 | UI | [React 19](https://react.dev/) + [Tailwind CSS 4](https://tailwindcss.com/) |
 | Code Highlighting | [Shiki](https://shiki.matsu.io/) |
 | Search | [FlexSearch](https://github.com/nextapps-de/flexsearch) |

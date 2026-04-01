@@ -95,7 +95,7 @@ ink             96 ファイル    20K 行   Ink レンダラーラッパー
 
 | レイヤー | テクノロジー |
 |----------|-------------|
-| フレームワーク | [Next.js 15](https://nextjs.org/) (App Router) |
+| フレームワーク | [Next.js 16](https://nextjs.org/) (App Router) |
 | UI | [React 19](https://react.dev/) + [Tailwind CSS 4](https://tailwindcss.com/) |
 | コードハイライト | [Shiki](https://shiki.matsu.io/) |
 | 検索 | [FlexSearch](https://github.com/nextapps-de/flexsearch) |

@@ -95,7 +95,7 @@ ink             96 文件    20K 行   Ink 渲染器封装
 
 | 层级 | 技术 |
 |------|------|
-| 框架 | [Next.js 15](https://nextjs.org/) (App Router) |
+| 框架 | [Next.js 16](https://nextjs.org/) (App Router) |
 | UI | [React 19](https://react.dev/) + [Tailwind CSS 4](https://tailwindcss.com/) |
 | 代码高亮 | [Shiki](https://shiki.matsu.io/) |
 | 搜索 | [FlexSearch](https://github.com/nextapps-de/flexsearch) |
