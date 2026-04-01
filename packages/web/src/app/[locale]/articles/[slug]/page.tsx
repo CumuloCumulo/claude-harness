@@ -1,5 +1,4 @@
 import { getArticle, getArticleList } from "@/lib/articles";
-import { getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { mdxComponents } from "@/components/mdx";
@@ -8,7 +7,7 @@ import remarkGfm from "remark-gfm";
 import ArticleShell from "./ArticleShell";
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export const dynamicParams = false; // Only serve statically generated pages
@@ -30,8 +29,7 @@ export async function generateStaticParams() {
 }
 
 export default async function ArticlePage({ params }: Props) {
-  const { slug } = await params;
-  const locale = await getLocale();
+  const { slug, locale } = await params;
 
   let article;
   try {
