@@ -195,29 +195,30 @@ These generated files power the web UI's code browser, module explorer, and sear
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    Web Application                    │
-│  ┌──────────┐  ┌──────────┐  ┌────────┐  ┌───────┐ │
-│  │ Articles  │  │   Code   │  │Modules │  │Search │ │
-│  │  (MDX)   │  │ Browser  │  │Explorer│  │(Flex) │ │
-│  └────┬─────┘  └────┬─────┘  └───┬────┘  └───┬───┘ │
-│       │              │            │            │      │
-│  ┌────▼──────────────▼────────────▼────────────▼───┐ │
-│  │              Generated Metadata                  │ │
-│  │  file-tree.json · module-stats.json · search idx │ │
-│  └────────────────────┬────────────────────────────┘ │
-└───────────────────────┼──────────────────────────────┘
-                        │
-              ┌─────────▼─────────┐
-              │  Generation Scripts │
-              │  (packages/scripts) │
-              └─────────┬─────────┘
-                        │
-              ┌─────────▼─────────┐
-              │  Claude Code Source │
-              │  (read-only archive)│
-              │  1,902 files · 514K │
-              └───────────────────┘
++---------------------------------------------------+
+|                  Web Application                   |
+|                                                    |
+|  +----------+ +----------+ +--------+ +---------+  |
+|  | Articles | |   Code   | | Module | | Search  |  |
+|  |  (MDX)   | | Browser  | |Explorer| | (Flex)  |  |
+|  +----+-----+ +----+-----+ +---+----+ +----+----+  |
+|       |             |           |           |       |
+|  +----v-------------v-----------v-----------v----+  |
+|  |             Generated Metadata                |  |
+|  |  file-tree.json module-stats.json search-idx  |  |
+|  +------------------------+----------------------+  |
++---------------------------|-------------------------+
+                            |
+                  +---------v---------+
+                  | Generation Scripts |
+                  | (packages/scripts) |
+                  +---------+---------+
+                            |
+                  +---------v---------+
+                  | Claude Code Source |
+                  | (read-only archive)|
+                  | 1,902 files  514K  |
+                  +--------------------+
 ```
 
 ## Contributing
