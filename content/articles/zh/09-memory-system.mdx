@@ -355,7 +355,7 @@ export async function scanMemoryFiles(
 }
 ```
 
-设计亮点：使用 `readFileInRange` 只读每个文件的前 30 行而非整个文件，并且 `readFileInRange` 内部会返回 `mtimeMs`，省掉了额外的 `stat` 调用——在常见情况下（N <= 200），这把系统调用数量减半。
+设计亮点：使用 `readFileInRange` 只读每个文件的前 30 行而非整个文件，并且 `readFileInRange` 内部会返回 `mtimeMs`，省掉了额外的 `stat` 调用——在常见情况下（N ≤ 200），这把系统调用数量减半。
 
 扫描结果还可以被格式化为文本清单（manifest），供检索和提取的 prompt 使用：
 
