@@ -4,3 +4,4 @@ node_modules
 dist
 packages/web/generated
 .env*.local
+.vercel
