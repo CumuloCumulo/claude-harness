@@ -2,14 +2,23 @@ import { readdir, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import matter from "gray-matter";
 
-// Works for both:
-//   - Vercel serverless: process.cwd() = monorepo root (via outputFileTracingRoot)
-//   - Local dev from packages/web: process.cwd() = packages/web → ../../content/articles
-//   - Local dev from monorepo root: process.cwd() = root → content/articles
 import { existsSync } from "node:fs";
-const candidate1 = resolve(process.cwd(), "content/articles");
-const candidate2 = resolve(process.cwd(), "../../content/articles");
-const ARTICLES_BASE = existsSync(candidate1) ? candidate1 : candidate2;
+
+function findArticlesBase(): string {
+  // Try multiple candidate paths to handle all environments
+  const candidates = [
+    resolve(process.cwd(), "content/articles"),
+    resolve(process.cwd(), "../../content/articles"),
+    resolve(process.cwd(), "../content/articles"),
+    resolve(process.cwd(), "packages/web/../../content/articles"),
+  ];
+  for (const c of candidates) {
+    if (existsSync(c)) return c;
+  }
+  // Fallback
+  return candidates[0];
+}
+const ARTICLES_BASE = findArticlesBase();
 
 export interface ArticleMeta {
   slug: string;
