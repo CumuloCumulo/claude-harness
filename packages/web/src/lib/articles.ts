@@ -5,15 +5,20 @@ import matter from "gray-matter";
 import { existsSync } from "node:fs";
 
 function findArticlesBase(): string {
+  const cwd = process.cwd();
   const candidates = [
-    resolve(process.cwd(), "../../content/articles"),    // local dev from packages/web
-    resolve(process.cwd(), "content/articles"),           // Vercel runtime (/var/task)
-    resolve(process.cwd(), "../content/articles"),        // fallback
+    resolve(cwd, "../../content/articles"),
+    resolve(cwd, "content/articles"),
+    resolve(cwd, "../content/articles"),
   ];
+  console.log(`[articles] cwd=${cwd}, checking: ${candidates.join(", ")}`);
   for (const c of candidates) {
-    if (existsSync(c)) return c;
+    if (existsSync(c)) {
+      console.log(`[articles] Found: ${c}`);
+      return c;
+    }
   }
-  // Return first candidate as fallback
+  console.error(`[articles] NOT FOUND, using fallback: ${candidates[0]}`);
   return candidates[0];
 }
 
