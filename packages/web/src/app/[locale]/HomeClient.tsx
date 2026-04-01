@@ -39,20 +39,7 @@ function MotionLink({ href, className, style, variants, children }: {
   );
 }
 
-function getArticleTag(order: number): { tag: string; tagClass: string } {
-  const tags: Record<number, { tag: string; tagClass: string }> = {
-    1: { tag: '架构解析', tagClass: 'tag-arch' },
-    2: { tag: '核心机制', tagClass: 'tag-perf' },
-    3: { tag: '工具系统', tagClass: 'tag-agent' },
-    4: { tag: '并发模型', tagClass: 'tag-sec' },
-    5: { tag: '安全机制', tagClass: 'tag-sec' },
-    6: { tag: '内存管理', tagClass: 'tag-mem' },
-    7: { tag: '性能优化', tagClass: 'tag-perf' },
-    8: { tag: '架构解析', tagClass: 'tag-arch' },
-    9: { tag: '核心机制', tagClass: 'tag-mem' },
-  };
-  return tags[order] || { tag: '源码解析', tagClass: 'tag-sec' };
-}
+import { t, getArticleTag, heroDescription } from "@/lib/ui-translations";
 
 const cellSizes = ['cell-xl', 'cell-lg', 'cell-md', 'cell-sm', 'cell-sm'];
 const cellColors = ['var(--accent)', 'var(--blue)', 'var(--green)', 'var(--purple)', 'var(--cyan)'];
@@ -86,7 +73,7 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className="pulse-dot"></div>
-          v0.2.29 源码解析已更新
+          {t(locale, 'home.badge')}
         </motion.div>
 
         <motion.h1
@@ -94,7 +81,11 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          拆解 <span className="highlight">Claude Code</span> 源码
+          {t(locale, 'home.heading').split('<highlight>').map((part, i) => {
+            if (i === 0) return part;
+            const [highlight, rest] = part.split('</highlight>');
+            return <span key={i}><span className="highlight">{highlight}</span>{rest}</span>;
+          })}
         </motion.h1>
 
         <motion.p
@@ -103,7 +94,7 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          深入探索 Anthropic 官方 CLI 工具的内部机制。从架构设计、Agent 循环到终端渲染，全面解析 {totalFiles.toLocaleString()}+ 个文件、{totalLinesK}k+ 行 TypeScript 代码。
+          {heroDescription(locale, totalFiles, totalLinesK)}
         </motion.p>
 
         <motion.div
@@ -114,15 +105,15 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
         >
           <motion.div className="stat" variants={itemVariants}>
             <span className="stat-value">{totalFiles.toLocaleString()}+</span>
-            <span className="stat-label">源文件</span>
+            <span className="stat-label">{t(locale, 'home.statFiles')}</span>
           </motion.div>
           <motion.div className="stat" variants={itemVariants}>
             <span className="stat-value">{totalLinesK}k+</span>
-            <span className="stat-label">代码行数</span>
+            <span className="stat-label">{t(locale, 'home.statLines')}</span>
           </motion.div>
           <motion.div className="stat" variants={itemVariants}>
             <span className="stat-value">{totalModules}</span>
-            <span className="stat-label">核心模块</span>
+            <span className="stat-label">{t(locale, 'home.statModules')}</span>
           </motion.div>
         </motion.div>
 
@@ -142,13 +133,13 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
             <div className="code-body">
               <div><span className="ln">1</span><span className="kw">async function</span> <span className="fn">runAgentLoop</span><span className="op">(</span>ctx<span className="op">:</span> <span className="tp">Context</span><span className="op">)</span> <span className="op">{"{"}</span></div>
               <div><span className="ln">2</span>  <span className="kw">while</span> <span className="op">(</span><span className="kw">true</span><span className="op">)</span> <span className="op">{"{"}</span></div>
-              <div><span className="ln">3</span>    <span className="cm">{"// 1. 收集上下文与工具"}</span></div>
+              <div><span className="ln">3</span>    <span className="cm">{t(locale, 'home.codeComment1')}</span></div>
               <div><span className="ln">4</span>    <span className="kw">const</span> tools <span className="op">=</span> <span className="kw">await</span> <span className="fn">getAvailableTools</span><span className="op">(</span>ctx<span className="op">)</span><span className="op">;</span></div>
               <div><span className="ln">5</span>    </div>
-              <div><span className="ln">6</span>    <span className="cm">{"// 2. 调用 Claude API"}</span></div>
+              <div><span className="ln">6</span>    <span className="cm">{t(locale, 'home.codeComment2')}</span></div>
               <div><span className="ln">7</span>    <span className="kw">const</span> response <span className="op">=</span> <span className="kw">await</span> <span className="fn">callClaude</span><span className="op">(</span>ctx<span className="op">,</span> tools<span className="op">)</span><span className="op">;</span></div>
               <div><span className="ln">8</span>    </div>
-              <div><span className="ln">9</span>    <span className="cm">{"// 3. 处理工具调用或返回结果"}</span></div>
+              <div><span className="ln">9</span>    <span className="cm">{t(locale, 'home.codeComment3')}</span></div>
               <div><span className="ln">10</span>    <span className="kw">if</span> <span className="op">(</span>response<span className="op">.</span><span className="tp">type</span> <span className="op">===</span> <span className="str">{`'tool_calls'`}</span><span className="op">)</span> <span className="op">{"{"}</span></div>
               <div><span className="ln">11</span>      <span className="kw">await</span> <span className="fn">executeTools</span><span className="op">(</span>ctx<span className="op">,</span> response<span className="op">.</span><span className="tp">calls</span><span className="op">)</span><span className="op">;</span></div>
               <div><span className="ln">12</span>    <span className="op">{"}"}</span> <span className="kw">else</span> <span className="op">{"{"}</span></div>
@@ -172,9 +163,9 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
         <motion.div className="section-header" variants={itemVariants}>
           <div>
             <div className="section-title">Architecture</div>
-            <h2 className="section-subtitle">核心模块拆解</h2>
+            <h2 className="section-subtitle">{t(locale, 'home.archSubtitle')}</h2>
           </div>
-          <Link href={`/${locale}/modules`} className="section-link">查看完整架构图 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></Link>
+          <Link href={`/${locale}/modules`} className="section-link">{t(locale, 'home.archLink')} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></Link>
         </motion.div>
 
         <motion.div className="treemap-container" variants={containerVariants}>
@@ -213,14 +204,14 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
         <motion.div className="section-header" variants={itemVariants}>
           <div>
             <div className="section-title">Deep Dives</div>
-            <h2 className="section-subtitle">深度解析文章</h2>
+            <h2 className="section-subtitle">{t(locale, 'home.articlesSubtitle')}</h2>
           </div>
-          <Link href={`/${locale}/articles`} className="section-link">浏览所有文章 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></Link>
+          <Link href={`/${locale}/articles`} className="section-link">{t(locale, 'home.articlesLink')} <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></Link>
         </motion.div>
 
         <motion.div className="articles-grid" variants={containerVariants}>
           {displayArticles.map((article, i) => {
-            const { tag, tagClass } = getArticleTag(article.order);
+            const { tag, tagClass } = getArticleTag(locale, article.order);
             const orderStr = String(article.order).padStart(2, '0');
             return (
               <motion.div key={article.slug} variants={itemVariants} className={i === 0 ? 'featured' : ''} style={i === 0 ? { gridColumn: 'span 2' } : undefined}>
@@ -236,9 +227,9 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
                   <h3 className="article-title">{article.title}</h3>
                   <p className="article-desc">{article.description}</p>
                   <div className="article-footer">
-                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 15 min read</span>
+                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> {t(locale, 'home.readTime')}</span>
                     {i === 0 && (
-                      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> 深入源码</span>
+                      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> {t(locale, 'home.deepDive')}</span>
                     )}
                   </div>
                 </Link>
@@ -259,30 +250,30 @@ export default function HomeClient({ locale, articles, moduleStats, sourceSummar
         <motion.div className="section-header" variants={itemVariants}>
           <div>
             <div className="section-title">Roadmap</div>
-            <h2 className="section-subtitle">解析计划</h2>
+            <h2 className="section-subtitle">{t(locale, 'home.roadmapSubtitle')}</h2>
           </div>
         </motion.div>
 
         <motion.div className="roadmap" variants={containerVariants}>
           <motion.div className="roadmap-step" variants={itemVariants}>
             <div className="roadmap-dot" style={{ borderColor: 'var(--accent)', color: 'var(--accent)', boxShadow: '0 0 20px var(--accent-glow)' }}>01</div>
-            <div className="roadmap-label">基础架构与启动</div>
-            <div className="roadmap-sub">CLI 入口、配置加载、鉴权流程</div>
+            <div className="roadmap-label">{t(locale, 'home.roadmap1Label')}</div>
+            <div className="roadmap-sub">{t(locale, 'home.roadmap1Sub')}</div>
           </motion.div>
           <motion.div className="roadmap-step" variants={itemVariants}>
             <div className="roadmap-dot" style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>02</div>
-            <div className="roadmap-label">Agent 核心循环</div>
-            <div className="roadmap-sub">Prompt 构建、API 交互、工具调度</div>
+            <div className="roadmap-label">{t(locale, 'home.roadmap2Label')}</div>
+            <div className="roadmap-sub">{t(locale, 'home.roadmap2Sub')}</div>
           </motion.div>
           <motion.div className="roadmap-step" variants={itemVariants}>
             <div className="roadmap-dot" style={{ borderColor: 'var(--accent)', color: 'var(--accent)', boxShadow: '0 0 20px var(--accent-glow)' }}>03</div>
-            <div className="roadmap-label">工具库实现</div>
-            <div className="roadmap-sub">文件操作、Bash 执行、AST 分析</div>
+            <div className="roadmap-label">{t(locale, 'home.roadmap3Label')}</div>
+            <div className="roadmap-sub">{t(locale, 'home.roadmap3Sub')}</div>
           </motion.div>
           <motion.div className="roadmap-step" variants={itemVariants}>
             <div className="roadmap-dot" style={{ borderColor: 'var(--accent)', color: 'var(--accent)', boxShadow: '0 0 20px var(--accent-glow)' }}>04</div>
-            <div className="roadmap-label">终端 UI 渲染</div>
-            <div className="roadmap-sub">Ink 组件树、流式输出、交互处理</div>
+            <div className="roadmap-label">{t(locale, 'home.roadmap4Label')}</div>
+            <div className="roadmap-sub">{t(locale, 'home.roadmap4Sub')}</div>
           </motion.div>
         </motion.div>
       </motion.section>

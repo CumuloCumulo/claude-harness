@@ -2,25 +2,11 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
+import { t, getArticleTag } from "@/lib/ui-translations";
 
 interface ArticlesClientProps {
   locale: string;
   articles: { slug: string; title: string; description: string; order: number }[];
-}
-
-function getArticleTag(order: number): { tag: string; tagClass: string } {
-  const tags: Record<number, { tag: string; tagClass: string }> = {
-    1: { tag: '架构解析', tagClass: 'tag-arch' },
-    2: { tag: '核心机制', tagClass: 'tag-perf' },
-    3: { tag: '工具系统', tagClass: 'tag-agent' },
-    4: { tag: '并发模型', tagClass: 'tag-sec' },
-    5: { tag: '安全机制', tagClass: 'tag-sec' },
-    6: { tag: '内存管理', tagClass: 'tag-mem' },
-    7: { tag: '性能优化', tagClass: 'tag-perf' },
-    8: { tag: '架构解析', tagClass: 'tag-arch' },
-    9: { tag: '核心机制', tagClass: 'tag-mem' },
-  };
-  return tags[order] || { tag: '源码解析', tagClass: 'tag-sec' };
 }
 
 export default function ArticlesClient({ locale, articles }: ArticlesClientProps) {
@@ -34,14 +20,14 @@ export default function ArticlesClient({ locale, articles }: ArticlesClientProps
       >
         <div>
           <div className="section-title">All Articles</div>
-          <h2 className="section-subtitle">深度解析文章</h2>
-          <p style={{ color: 'var(--text-dim)', marginTop: '12px', fontSize: '15px' }}>Claude Code 架构与内部实现的源码导读。</p>
+          <h2 className="section-subtitle">{t(locale, 'articles.subtitle')}</h2>
+          <p style={{ color: 'var(--text-dim)', marginTop: '12px', fontSize: '15px' }}>{t(locale, 'articles.desc')}</p>
         </div>
       </motion.div>
 
       <div className="articles-grid">
         {articles.map((article, index) => {
-          const { tag, tagClass } = getArticleTag(article.order);
+          const { tag, tagClass } = getArticleTag(locale, article.order);
           const readTime = `${Math.max(8, 20 - article.order)} min read`;
 
           return (

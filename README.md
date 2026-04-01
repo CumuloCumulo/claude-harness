@@ -38,39 +38,39 @@ Browse the full Claude Code source tree with a file explorer, syntax highlightin
 
 31 guided walkthroughs covering every major subsystem:
 
-| # | Article | Topic |
-|---|---------|-------|
-| 01 | Architecture Overview | High-level structure and design philosophy |
-| 02 | Query Engine | Core inference loop and message handling |
-| 03 | Tool System | ~40 tool implementations and dispatch |
-| 04 | Streaming & Execution | Real-time streaming tool executor |
-| 05 | Permission System | Trust boundaries and approval workflows |
-| 06 | Context Management | Compression, windowing, token budgets |
-| 07 | Startup Performance | Fast cold-start initialization |
-| 08 | Multi-Agent System | Subagent spawning and coordination |
-| 09 | Memory System | Persistent context across sessions |
-| 10 | Bridge System | VS Code & JetBrains IDE integration |
-| 11 | MCP Integration | Model Context Protocol servers |
-| 12 | Plugins & Skills | Extensible skill loading system |
-| 13 | Authentication | OAuth, API keys, and session management |
-| 14 | Terminal UI | Ink-based reactive terminal interface |
-| 15 | Keybindings & Vim | Keyboard shortcuts and vim mode |
-| 16 | Screens | Full-screen UI system |
-| 17 | State Management | Reactive state and stores |
-| 18 | Telemetry | Usage tracking and analytics |
-| 19 | Config System | Settings, profiles, and defaults |
-| 20 | Feature Flags | Gradual rollout and experimentation |
-| 21 | File Operations | Read, write, edit, glob, grep |
-| 22 | Bash Tool | Shell execution and sandboxing |
-| 23 | Search System | Code search and file discovery |
-| 24 | Web Tools | Browser and web interaction |
-| 25 | LSP Integration | Language Server Protocol support |
-| 26 | Buddy System | Pair programming features |
-| 27 | Output Styles | Formatting and rendering |
-| 28 | Remote Execution | Remote agent triggers |
-| 29 | Session Management | Conversation persistence |
-| 30 | API Client | Anthropic API communication layer |
-| 31 | Error Recovery | Resilience and retry strategies |
+| # | Article |
+|---|---------|
+| 01 | The Big Picture: How a 512,000-Line AI CLI Is Built |
+| 02 | The Query Engine: The Complete Lifecycle of a Conversation |
+| 03 | The Tool System: How AI Safely Interacts with the Outside World |
+| 04 | The Streaming Tool Executor: How to Safely Let AI Operate Multiple Tools Simultaneously |
+| 05 | The Permission System: Walking the Tightrope Between Autonomy and Safety |
+| 06 | Context Management: When Even a Million Tokens Aren't Enough |
+| 07 | Startup Performance: How a Heavy CLI Achieves Fast Cold Starts |
+| 08 | Multi-Agent Orchestration: How the Coordinator Pattern Enables AI Collaboration |
+| 09 | Persistent Memory: How AI Remembers You Across Sessions |
+| 10 | Bridge System: Bidirectional Communication Architecture Between CLI and IDE |
+| 11 | MCP Protocol Integration: How AI Tools Connect to Everything |
+| 12 | Plugins and Skills: A Three-Layer Extensibility Architecture |
+| 13 | OAuth and Authentication: The Full Pipeline from Keychain to Token Refresh |
+| 14 | Terminal UI Framework: Building a CLI with React |
+| 15 | Keybindings and Vim Mode: Editor-Level Interaction in a CLI |
+| 16 | Screen System: Designing Fullscreen Interaction Modes |
+| 17 | State Management: React State Architecture Without Redux |
+| 18 | Telemetry and Observability: OpenTelemetry in a CLI Application |
+| 19 | Configuration System: Schema Validation, Migrations, and Multi-Source Merging |
+| 20 | Feature Flags and Conditional Compilation: The Art of Compile-Time Code Elimination |
+| 21 | The File Operations Trio: Design Philosophy of Read, Write, and Edit |
+| 22 | BashTool: Letting AI Safely Execute Shell Commands |
+| 23 | The Search System: The Glob + Grep + Full-Text Search Combination |
+| 24 | Web Tools: How AI Accesses the Internet |
+| 25 | LSP Integration: How Language Server Protocol Enhances AI Coding |
+| 26 | The Buddy System: A Virtual Pet Game Inside Your Codebase |
+| 27 | The Output Style System: Bringing Brand Identity to Terminal Output |
+| 28 | Remote Execution and Scheduled Triggers: The Headless AI Agent |
+| 29 | Session Management: Interruption, Resumption, and Sharing |
+| 30 | API Client: Deep Integration with the Anthropic API |
+| 31 | Error Handling and Self-Healing: How AI Recovers from Failures |
 
 ### Module Explorer
 

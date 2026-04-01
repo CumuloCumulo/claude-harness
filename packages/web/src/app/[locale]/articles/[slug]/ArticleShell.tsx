@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import { t, getTagLabel, formatTemplate } from "@/lib/ui-translations";
 
 interface ArticleShellProps {
   locale: string;
@@ -33,102 +34,7 @@ const TAG_COLORS: Record<string, { color: string; bg: string; border: string }> 
   config: { color: 'var(--accent)', bg: 'var(--accent-dim)', border: 'rgba(245,158,11,0.2)' },
 };
 
-const TAG_LABELS: Record<string, string> = {
-  architecture: '架构',
-  overview: 'overview',
-  startup: 'startup',
-  tools: '工具',
-  permissions: '权限',
-  security: '安全',
-  performance: '性能',
-  streaming: '流式',
-  'query-engine': '查询引擎',
-  'async-generator': '异步生成器',
-  recovery: '恢复',
-  'streaming-executor': '流式执行',
-  concurrency: '并发',
-  context: '上下文',
-  compact: '压缩',
-  'token-management': 'Token管理',
-  'lazy-loading': '惰性加载',
-  'feature-flags': 'Feature Flag',
-  'multi-agent': '多Agent',
-  coordinator: '协调器',
-  'agent-tool': 'AgentTool',
-  swarm: 'Swarm',
-  memory: '记忆',
-  persistence: '持久化',
-  memdir: 'memdir',
-  bridge: 'Bridge',
-  'ide-integration': 'IDE集成',
-  'session-management': '会话管理',
-  mcp: 'MCP',
-  protocol: '协议',
-  extensibility: '可扩展',
-  skills: 'Skills',
-  plugins: '插件',
-  oauth: 'OAuth',
-  authentication: '认证',
-  keychain: 'Keychain',
-  'terminal-ui': '终端UI',
-  react: 'React',
-  ink: 'Ink',
-  components: '组件',
-  keybindings: '快捷键',
-  vim: 'Vim',
-  'state-machine': '状态机',
-  input: '输入',
-  screens: '全屏',
-  fullscreen: '全屏UI',
-  doctor: 'Doctor',
-  resume: '恢复',
-  state: '状态',
-  store: 'Store',
-  telemetry: '遥测',
-  opentelemetry: 'OpenTelemetry',
-  analytics: '分析',
-  config: '配置',
-  schema: 'Schema',
-  migrations: '迁移',
-  settings: '设置',
-  bun: 'Bun',
-  'dead-code-elimination': 'DCE',
-  'file-operations': '文件操作',
-  read: 'Read',
-  write: 'Write',
-  edit: 'Edit',
-  bash: 'Bash',
-  shell: 'Shell',
-  sandbox: '沙箱',
-  search: '搜索',
-  glob: 'Glob',
-  grep: 'Grep',
-  ripgrep: 'ripgrep',
-  web: 'Web',
-  fetch: 'Fetch',
-  proxy: '代理',
-  lsp: 'LSP',
-  'language-server': '语言服务',
-  diagnostics: '诊断',
-  buddy: 'Buddy',
-  'easter-egg': '彩蛋',
-  prng: 'PRNG',
-  output: '输出',
-  styles: '样式',
-  themes: '主题',
-  markdown: 'Markdown',
-  remote: '远程',
-  cron: 'Cron',
-  headless: '无头模式',
-  server: '服务器',
-  session: '会话',
-  share: '分享',
-  api: 'API',
-  anthropic: 'Anthropic',
-  'cost-tracking': '成本追踪',
-  'error-handling': '错误处理',
-  resilience: '韧性',
-};
+// TAG_LABELS now handled by getTagLabel() from ui-translations
 
 interface Heading {
   id: string;
@@ -275,7 +181,7 @@ export default function ArticleShell({ locale, title, description, order, totalA
           <Link href={`/${locale}`} className="nav-logo"><span className="dot"></span> Claude Harness</Link>
           <div className="nav-breadcrumb">
             <span className="sep">/</span>
-            <Link href={`/${locale}/articles`}>文章</Link>
+            <Link href={`/${locale}/articles`}>{t(locale, 'nav.articles')}</Link>
             <span className="sep">/</span>
             <span style={{ color: 'var(--text-dim)' }}>{String(order).padStart(2, '0')} — {title.length > 20 ? title.slice(0, 20) + '...' : title}</span>
           </div>
@@ -290,7 +196,7 @@ export default function ArticleShell({ locale, title, description, order, totalA
 
       <div className="article-layout">
         <aside className="toc-sidebar">
-          <div className="toc-label">目录</div>
+          <div className="toc-label">{t(locale, 'article.toc')}</div>
           <ul className="toc-list">
             {headings.map((h) => (
               <li key={h.id} className="toc-item">
@@ -312,7 +218,7 @@ export default function ArticleShell({ locale, title, description, order, totalA
               <div className="article-meta-row">
                 {tags.slice(0, 3).map((tag) => {
                   const colors = TAG_COLORS[tag] || { color: 'var(--text-dim)', bg: 'rgba(255,255,255,0.05)', border: 'var(--border)' };
-                  const label = TAG_LABELS[tag] || tag;
+                  const label = getTagLabel(locale, tag);
                   return (
                     <span
                       key={tag}
@@ -327,8 +233,8 @@ export default function ArticleShell({ locale, title, description, order, totalA
               <h1 className="article-title">{title}</h1>
               <p className="article-desc">{description}</p>
               <div className="article-info">
-                <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> 约 {readTime} 分钟</span>
-                {moduleCount > 0 && <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> 涉及 {moduleCount} 个模块</span>}
+                <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> {formatTemplate(t(locale, 'article.readTime'), { readTime })}</span>
+                {moduleCount > 0 && <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> {formatTemplate(t(locale, 'article.moduleCount'), { moduleCount })}</span>}
                 <span>{String(order).padStart(2, '0')} / {String(totalArticles).padStart(2, '0')}</span>
               </div>
             </header>
@@ -340,10 +246,10 @@ export default function ArticleShell({ locale, title, description, order, totalA
         </main>
 
         <aside className="right-gutter">
-          <div className="gutter-label">文章信息</div>
+          <div className="gutter-label">{t(locale, 'article.sidebarTitle')}</div>
           <div className="gutter-file">
-            第 {order} 篇
-            <span className="gutter-lines">共 {totalArticles} 篇</span>
+            {formatTemplate(t(locale, 'article.articleNum'), { order })}
+            <span className="gutter-lines">{formatTemplate(t(locale, 'article.articleTotal'), { total: totalArticles })}</span>
           </div>
         </aside>
       </div>

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LocaleSwitcher } from "./LocaleSwitcher";
+import { t } from "@/lib/ui-translations";
 
 export function Nav() {
   const pathname = usePathname();
@@ -18,9 +19,9 @@ export function Nav() {
   const locale = segments[0] || 'en';
 
   const navItems = [
-    { name: '文章', path: `/${locale}/articles` },
-    { name: '代码', path: `/${locale}/code` },
-    { name: '模块', path: `/${locale}/modules` },
+    { name: t(locale, 'nav.articles'), path: `/${locale}/articles` },
+    { name: t(locale, 'nav.code'), path: `/${locale}/code` },
+    { name: t(locale, 'nav.modules'), path: `/${locale}/modules` },
   ];
 
   return (
@@ -45,7 +46,7 @@ export function Nav() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div className="nav-search">
           <Search className="h-3 w-3" />
-          <span>搜索...</span>
+          <span>{t(locale, 'nav.search')}</span>
           <kbd>⌘K</kbd>
         </div>
         <LocaleSwitcher />
@@ -61,9 +62,11 @@ export function Footer() {
   const isArticleDetail = segments.length >= 3 && segments[1] === 'articles';
   if (isArticleDetail) return null;
 
+  const locale = segments[0] || 'en';
+
   return (
     <footer>
-      <div>&copy; 2026 Claude Harness. 深入解析 Claude Code 源码。</div>
+      <div>&copy; 2026 Claude Harness. {t(locale, 'nav.footer')}</div>
       <div style={{ display: 'flex', gap: '24px' }}>
         <a href="#">GitHub</a>
         <a href="#">Twitter</a>

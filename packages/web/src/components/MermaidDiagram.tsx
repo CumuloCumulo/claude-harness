@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 
 interface MermaidDiagramProps {
   chart: string;
@@ -251,6 +252,8 @@ function ComparisonDiagram({
   nodes: Map<string, ParsedNode>;
   edges: ParsedEdge[];
 }) {
+  const pathname = usePathname();
+  const locale = pathname.split('/').filter(Boolean)[0] || 'en';
   // Analyze each subgraph's structure
   const panels = subgraphs.map((sg) => {
     const sgNodeSet = new Set(sg.nodeIds);
@@ -272,7 +275,7 @@ function ComparisonDiagram({
     const startNodes = sg.nodeIds.filter((id) => inDegree.get(id) === 0);
     const endNodes = sg.nodeIds.filter((id) => outDegree.get(id) === 0);
     const hasFork = startNodes.some((id) => (outDegree.get(id) || 0) > 1);
-    const isSlow = /慢|串行|slow/i.test(sg.label);
+    const isSlow = /慢|串行|slow|遅い|直列/i.test(sg.label);
 
     // Build ordered timeline rows
     // For fork-join: start → [parallel group] → end
@@ -352,8 +355,12 @@ function ComparisonDiagram({
             </div>
             <div className="cmp-total" style={{ color }}>
               {panel.isSlow
-                ? `总耗时 ≈ ${panel.rows.length} 步`
-                : `总耗时 ≈ ${panel.rows.length} 步（并行 = 更快）`}
+                ? locale === 'ja' ? `合計 ≈ ${panel.rows.length} ステップ`
+                  : locale === 'en' ? `Total ≈ ${panel.rows.length} steps`
+                  : `总耗时 ≈ ${panel.rows.length} 步`
+                : locale === 'ja' ? `合計 ≈ ${panel.rows.length} ステップ（並行 = 高速）`
+                  : locale === 'en' ? `Total ≈ ${panel.rows.length} steps (parallel = faster)`
+                  : `总耗时 ≈ ${panel.rows.length} 步（并行 = 更快）`}
             </div>
           </div>
         );
