@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useTransition, useEffect } from "react";
+import { useState, useCallback, useMemo, useTransition, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search, ChevronDown, ChevronRight, FileText, Loader2 } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -65,23 +65,38 @@ function FileNode({
   selectedPath,
   onSelect,
   expandedPaths,
+  highlightPath,
 }: {
   node: TreeNode;
   level?: number;
   selectedPath: string | null;
   onSelect: (path: string) => void;
   expandedPaths?: Set<string>;
+  highlightPath?: string;
 }) {
   const [isOpen, setIsOpen] = useState(
     level < 1 || (expandedPaths?.has(node.path) ?? false)
   );
   const isSelected = selectedPath === node.path && node.type === "file";
+  const isHighlighted = highlightPath === node.path;
+  const nodeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isHighlighted && nodeRef.current) {
+      nodeRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, [isHighlighted]);
 
   if (node.type === "directory") {
     return (
       <div>
         <div
-          className="flex items-center py-1.5 px-2 mx-2 my-0.5 rounded-lg hover:bg-white/5 cursor-pointer text-[14px] text-[var(--text)] font-mono transition-colors"
+          ref={isHighlighted ? nodeRef : undefined}
+          className={`flex items-center py-1.5 px-2 mx-2 my-0.5 rounded-lg cursor-pointer text-[14px] font-mono transition-colors ${
+            isHighlighted
+              ? "bg-[var(--accent)]/15 text-[var(--accent)]"
+              : "hover:bg-white/5 text-[var(--text)]"
+          }`}
           style={{ paddingLeft: `${level * 12 + 8}px` }}
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -101,6 +116,7 @@ function FileNode({
               selectedPath={selectedPath}
               onSelect={onSelect}
               expandedPaths={expandedPaths}
+              highlightPath={highlightPath}
             />
           ))}
       </div>
@@ -197,6 +213,7 @@ export default function CodeBrowserClient({ tree }: { tree: TreeNode[] }) {
               selectedPath={selectedPath}
               onSelect={handleSelect}
               expandedPaths={expandedPaths}
+              highlightPath={initialPath}
             />
           ))}
         </div>
