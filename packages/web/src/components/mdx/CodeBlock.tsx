@@ -112,24 +112,6 @@ function detectHighlightLines(code: string): Set<number> {
     }
   }
 
-  // If explicit markers found, use only those
-  if (hasExplicitMarkers) return highlights;
-
-  // Auto-detect: Chinese comment lines + following code lines
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    // Chinese comment line (contains CJK characters in a comment)
-    if (/^\/\/.*[\u4e00-\u9fff]/.test(line)) {
-      highlights.add(i);
-      // Also highlight subsequent non-empty, non-comment code lines
-      for (let j = i + 1; j < lines.length; j++) {
-        const next = lines[j].trim();
-        if (!next || /^\/\//.test(next)) break;
-        highlights.add(j);
-      }
-    }
-  }
-
   return highlights;
 }
 
