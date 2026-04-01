@@ -1,6 +1,7 @@
 {
   "framework": "nextjs",
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "pnpm install",
   "buildCommand": "cd packages/web && npx next build",
-  "outputDirectory": "packages/web/.next"
+  "outputDirectory": "packages/web/.next",
+  "nodeVersion": "22.x"
 }
