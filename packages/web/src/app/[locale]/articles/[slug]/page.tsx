@@ -33,7 +33,8 @@ export default async function ArticlePage({ params }: Props) {
   let article;
   try {
     article = await getArticle(slug, locale);
-  } catch {
+  } catch (e) {
+    console.error(`[ArticlePage] Failed to load article ${slug}:`, e);
     notFound();
   }
 
@@ -43,6 +44,20 @@ export default async function ArticlePage({ params }: Props) {
     totalArticles = allArticles.length;
   } catch {
     totalArticles = 31;
+  }
+
+  let mdxContent;
+  try {
+    mdxContent = (
+      <MDXRemote
+        source={article.content}
+        components={mdxComponents}
+        options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+      />
+    );
+  } catch (e) {
+    console.error(`[ArticlePage] MDX render error for ${slug}:`, e);
+    mdxContent = <pre style={{ color: "red" }}>{String(e)}</pre>;
   }
 
   return (
@@ -56,11 +71,7 @@ export default async function ArticlePage({ params }: Props) {
       readTime={article.meta.readTime}
       moduleCount={article.meta.moduleCount}
     >
-      <MDXRemote
-        source={article.content}
-        components={mdxComponents}
-        options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
-      />
+      {mdxContent}
       <CodeBlockCopyScript />
     </ArticleShell>
   );
