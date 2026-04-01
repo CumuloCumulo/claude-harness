@@ -1,4 +1,4 @@
-[English](./README.md) | [中文](./README-zh.md)
+[English](./README.md) | [中文](./README-zh.md) | [日本語](./README-ja.md)
 
 # Claude Harness
 
@@ -248,7 +248,6 @@ readTime: "15 min"
 ## 相关项目
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — Anthropic 官方 AI 编程代理
-- [Learn Claude Code](https://github.com/shareAI-lab/learn-claude-code) — AI 代理工具编排工程课程
 
 ## 许可证
 

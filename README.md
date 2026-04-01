@@ -1,4 +1,4 @@
-[English](./README.md) | [中文](./README-zh.md)
+[English](./README.md) | [中文](./README-zh.md) | [日本語](./README-ja.md)
 
 # Claude Harness
 
@@ -248,7 +248,6 @@ Your content here...
 ## Related Projects
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — Anthropic's official AI coding agent
-- [Learn Claude Code](https://github.com/shareAI-lab/learn-claude-code) — Harness engineering course with hands-on sessions
 
 ## License
 
