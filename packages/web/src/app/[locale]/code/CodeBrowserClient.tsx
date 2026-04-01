@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, useMemo, useTransition } from "react";
+import { useState, useCallback, useMemo, useTransition, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, ChevronDown, ChevronRight, FileText, Loader2 } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -63,13 +64,17 @@ function FileNode({
   level = 0,
   selectedPath,
   onSelect,
+  expandedPaths,
 }: {
   node: TreeNode;
   level?: number;
   selectedPath: string | null;
   onSelect: (path: string) => void;
+  expandedPaths?: Set<string>;
 }) {
-  const [isOpen, setIsOpen] = useState(level < 1);
+  const [isOpen, setIsOpen] = useState(
+    level < 1 || (expandedPaths?.has(node.path) ?? false)
+  );
   const isSelected = selectedPath === node.path && node.type === "file";
 
   if (node.type === "directory") {
@@ -95,6 +100,7 @@ function FileNode({
               level={level + 1}
               selectedPath={selectedPath}
               onSelect={onSelect}
+              expandedPaths={expandedPaths}
             />
           ))}
       </div>
@@ -117,11 +123,30 @@ function FileNode({
 }
 
 export default function CodeBrowserClient({ tree }: { tree: TreeNode[] }) {
+  const searchParams = useSearchParams();
+  const initialPath = searchParams.get("path") || "";
+
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  // Auto-expand to the path from URL query
+  const expandedPaths = useMemo(() => {
+    const paths = new Set<string>();
+    if (initialPath) {
+      // Expand all ancestor paths: "utils" → expand "utils"
+      // "services/api" → expand "services" and "services/api"
+      const parts = initialPath.split("/");
+      let current = "";
+      for (const part of parts) {
+        current = current ? `${current}/${part}` : part;
+        paths.add(current);
+      }
+    }
+    return paths;
+  }, [initialPath]);
 
   const filteredTree = useMemo(
     () => filterTree(tree, searchQuery),
@@ -171,6 +196,7 @@ export default function CodeBrowserClient({ tree }: { tree: TreeNode[] }) {
               node={node}
               selectedPath={selectedPath}
               onSelect={handleSelect}
+              expandedPaths={expandedPaths}
             />
           ))}
         </div>

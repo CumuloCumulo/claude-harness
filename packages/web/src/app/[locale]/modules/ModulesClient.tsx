@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useRouter, useParams } from "next/navigation";
 
 const MODULE_COLORS = [
   'var(--accent)',
@@ -15,6 +16,10 @@ interface ModulesClientProps {
 }
 
 export default function ModulesClient({ modules }: ModulesClientProps) {
+  const router = useRouter();
+  const params = useParams();
+  const locale = params.locale || "zh";
+
   return (
     <section className="treemap-section" style={{ marginTop: '60px', marginBottom: '100px' }}>
       <motion.div
@@ -38,7 +43,8 @@ export default function ModulesClient({ modules }: ModulesClientProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.02, ease: [0.16, 1, 0.3, 1] }}
             className="tree-cell cell-xl"
-            style={{ '--cell-color': MODULE_COLORS[index % MODULE_COLORS.length], gridColumn: 'span 4' } as React.CSSProperties}
+            style={{ '--cell-color': MODULE_COLORS[index % MODULE_COLORS.length], gridColumn: 'span 4', cursor: 'pointer' } as React.CSSProperties}
+            onClick={() => router.push(`/${locale}/code?path=${encodeURIComponent(mod.path)}`)}
           >
             <div>
               <div className="tree-cell-name">{mod.name}/</div>
