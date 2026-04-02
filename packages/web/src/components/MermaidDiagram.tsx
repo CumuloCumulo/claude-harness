@@ -128,21 +128,7 @@ function parseChart(chart: string): ParsedChart {
       continue;
     }
 
-    // Edges: A --> B, A -->|label| B, A ---> B
-    const edgeMatch = trimmed.match(
-      /^(\w+)\s*-+>(?:\|([^|]*)\|)?\s*(\w+)(?:\s*$|[^[])/
-    );
-    if (edgeMatch) {
-      edges.push({
-        from: edgeMatch[1],
-        to: edgeMatch[3],
-        label: edgeMatch[2]?.trim(),
-      });
-      // Also extract inline node definitions from edges like:
-      // C -->|Research 阶段| W1[Worker 1: 研究代码库]
-    }
-
-    // Node definitions: extract all node declarations from the line
+    // ── Parse node definitions first ──
     // Patterns: ID[text], ID["text"], ID{text}, ID(text), ID([text]), ID[[text]]
     const nodeRegex =
       /(\w+)\s*(?:\["([^"]*?)"\]|\[([^\]]*?)\]|\{([^}]*?)\}|\(\[([^\]]*?)\]\)|\(([^)]*?)\))/g;
@@ -177,15 +163,21 @@ function parseChart(chart: string): ParsedChart {
       }
     }
 
-    // Also parse edges from lines that have node defs
-    // e.g. "C -->|Research 阶段| W1[Worker 1: 研究代码库]"
-    const edgeInlineRegex =
-      /(\w+)\s*(-+>+)\s*(?:\|([^|]*)\|)?\s*(\w+)/g;
+    // ── Parse edges ──
+    // Strip bracket content so "A[long text] --> B{text}" becomes "A --> B"
+    const stripped = trimmed
+      .replace(/\["[^"]*"\]/g, "")  // ["..."]
+      .replace(/\[[^\]]*\]/g, "")    // [...]
+      .replace(/\{[^}]*\}/g, "")     // {...}
+      .replace(/\(\[[^\]]*\]\)/g, "") // ([...])
+      .replace(/\([^)]*\)/g, "");     // (...)
+
+    const edgeGlobalRegex = /(\w+)\s*-+>(?:\|([^|]*)\|)?\s*(\w+)/g;
     let eim;
-    while ((eim = edgeInlineRegex.exec(trimmed)) !== null) {
+    while ((eim = edgeGlobalRegex.exec(stripped)) !== null) {
       const from = eim[1];
-      const to = eim[4];
-      const label = eim[3]?.trim();
+      const to = eim[3];
+      const label = eim[2]?.trim();
       if (
         from !== "style" &&
         !edges.some((e) => e.from === from && e.to === to && e.label === label)
@@ -497,7 +489,14 @@ function LayeredDiagram({
   );
 }
 
-// ─── Flow Diagram (without subgraphs) ─────────────────────────────
+// ─── Flow Diagram (ELKjs-powered layout) ────────────────────────────
+
+interface ElkLayoutResult {
+  nodePositions: Map<string, { x: number; y: number; width: number; height: number }>;
+  edgeRoutes: { from: string; to: string; label?: string; points: { x: number; y: number }[] }[];
+  width: number;
+  height: number;
+}
 
 function FlowDiagram({
   nodes,
@@ -508,61 +507,249 @@ function FlowDiagram({
   edges: ParsedEdge[];
   isHorizontal: boolean;
 }) {
-  // Topological sort for ordering
-  const ordered = topoSort(nodes, edges);
+  const [layout, setLayout] = useState<ElkLayoutResult | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function runLayout() {
+      const ELK = (await import("elkjs/lib/elk.bundled.js")).default;
+      const elk = new ELK();
+
+      // Estimate node dimensions — CJK chars are ~2x width of Latin
+      const measureTextWidth = (text: string, fontSize: number) => {
+        let w = 0;
+        for (const ch of text) {
+          w += ch.charCodeAt(0) > 0x2e7f ? fontSize : fontSize * 0.6;
+        }
+        return w;
+      };
+      const estimateNodeSize = (node: ParsedNode) => {
+        const titleW = measureTextWidth(node.title, 13);
+        const descW = node.desc ? measureTextWidth(node.desc, 11.5) : 0;
+        const contentW = Math.max(titleW, descW);
+        const width = Math.max(140, Math.min(280, contentW + 48));
+        const height = node.desc ? 72 : 48;
+        return { width, height };
+      };
+
+      const elkNodes = [...nodes.entries()].map(([id, node]) => {
+        const { width, height } = estimateNodeSize(node);
+        return { id, width, height };
+      });
+
+      const elkEdges = edges
+        .filter((e) => nodes.has(e.from) && nodes.has(e.to))
+        .map((e, i) => ({
+          id: `e${i}`,
+          sources: [e.from],
+          targets: [e.to],
+        }));
+
+      const graph = {
+        id: "root",
+        layoutOptions: {
+          "elk.algorithm": "layered",
+          "elk.direction": isHorizontal ? "RIGHT" : "DOWN",
+          "elk.spacing.nodeNode": "40",
+          "elk.layered.spacing.nodeNodeBetweenLayers": "70",
+          "elk.layered.spacing.edgeNodeBetweenLayers": "30",
+          "elk.layered.spacing.edgeEdgeBetweenLayers": "25",
+          "elk.spacing.edgeNode": "25",
+          "elk.spacing.edgeEdge": "20",
+          "elk.edgeRouting": "POLYLINE",
+          "elk.layered.mergeEdges": "false",
+          "elk.layered.nodePlacement.strategy": "BRANDES_KOEPF",
+          "elk.layered.crossingMinimization.strategy": "LAYER_SWEEP",
+        },
+        children: elkNodes,
+        edges: elkEdges,
+      };
+
+      try {
+        const result = await elk.layout(graph) as any;
+        if (cancelled) return;
+
+        const nodePositions = new Map<string, { x: number; y: number; width: number; height: number }>();
+        for (const child of result.children || []) {
+          nodePositions.set(child.id, {
+            x: child.x || 0,
+            y: child.y || 0,
+            width: child.width || 140,
+            height: child.height || 48,
+          });
+        }
+
+        const edgeRoutes = (result.edges || []).map((elkEdge: any, i: number) => {
+          const sections = elkEdge.sections || [];
+          const points: { x: number; y: number }[] = [];
+          for (const section of sections) {
+            if (section.startPoint) points.push(section.startPoint);
+            if (section.bendPoints) points.push(...section.bendPoints);
+            if (section.endPoint) points.push(section.endPoint);
+          }
+          return {
+            from: edges[i].from,
+            to: edges[i].to,
+            label: edges[i].label,
+            points,
+          };
+        });
+
+        setLayout({
+          nodePositions,
+          edgeRoutes,
+          width: result.width || 400,
+          height: result.height || 300,
+        });
+      } catch (err) {
+        console.warn("ELK layout failed:", err);
+      }
+    }
+
+    runLayout();
+    return () => { cancelled = true; };
+  }, [nodes, edges, isHorizontal]);
+
+  // Loading state
+  if (!layout) {
+    return (
+      <div className="custom-diagram" style={{ minHeight: 120, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <span style={{ color: "var(--text-muted)", fontSize: 13 }}>...</span>
+      </div>
+    );
+  }
+
+  const { nodePositions, edgeRoutes, width, height } = layout;
+  const PAD = 20;
 
   return (
-    <div
-      className="custom-diagram"
-      style={{
-        display: "flex",
-        flexDirection: isHorizontal ? "row" : "column",
-        gap: "6px",
-        alignItems: "center",
-        flexWrap: "wrap",
-        justifyContent: "center",
-      }}
-    >
-      {ordered.map((nodeId, i) => {
-        const node = nodes.get(nodeId);
-        if (!node) return null;
-        const pal = getPalette(node.paletteIdx ?? i);
+    <div className="custom-diagram" style={{ display: "flex", justifyContent: "center" }}>
+      <svg
+        width={width + PAD * 2}
+        height={height + PAD * 2}
+        viewBox={`${-PAD} ${-PAD} ${width + PAD * 2} ${height + PAD * 2}`}
+        style={{ maxWidth: "100%", height: "auto" }}
+      >
+        <defs>
+          <marker
+            id="arrowhead"
+            markerWidth="8"
+            markerHeight="6"
+            refX="8"
+            refY="3"
+            orient="auto"
+          >
+            <polygon points="0 0, 8 3, 0 6" fill="#475569" />
+          </marker>
+        </defs>
 
-        // Find edge label from previous node
-        const inEdge = edges.find((e) => e.to === nodeId);
+        {/* Edges */}
+        {edgeRoutes.map((route, i) => {
+          if (route.points.length < 2) return null;
 
-        return (
-          <React.Fragment key={nodeId}>
-            {i > 0 && (
-              <div className="diagram-flow-arrow">
-                {inEdge?.label && (
-                  <span className="diagram-edge-label">
-                    {inEdge.label}
-                  </span>
-                )}
-                <svg
-                  width={isHorizontal ? "24" : "14"}
-                  height={isHorizontal ? "14" : "24"}
-                  viewBox={isHorizontal ? "0 0 24 14" : "0 0 14 24"}
+          // Build SVG polyline path
+          const d = route.points
+            .map((p, j) => `${j === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+            .join(" ");
+
+          // Label at midpoint of the path
+          const midIdx = Math.floor(route.points.length / 2);
+          const p0 = route.points[midIdx - 1] || route.points[0];
+          const p1 = route.points[midIdx];
+          const labelX = (p0.x + p1.x) / 2;
+          const labelY = (p0.y + p1.y) / 2;
+
+          // Estimate label width for CJK
+          const labelW = route.label
+            ? [...route.label].reduce((w, ch) => w + (ch.charCodeAt(0) > 0x2e7f ? 12 : 7), 0) + 12
+            : 0;
+
+          return (
+            <g key={i}>
+              <path
+                d={d}
+                fill="none"
+                stroke="#475569"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+                markerEnd="url(#arrowhead)"
+              />
+              {route.label && (
+                <>
+                  <rect
+                    x={labelX - labelW / 2}
+                    y={labelY - 11}
+                    width={labelW}
+                    height={18}
+                    rx={4}
+                    fill="var(--bg-elevated, #1a1a1a)"
+                    fillOpacity="0.92"
+                  />
+                  <text
+                    x={labelX}
+                    y={labelY + 3}
+                    textAnchor="middle"
+                    fill="var(--text-muted, #94a3b8)"
+                    fontSize="11"
+                    fontFamily="'JetBrains Mono', monospace"
+                  >
+                    {route.label}
+                  </text>
+                </>
+              )}
+            </g>
+          );
+        })}
+
+        {/* Nodes */}
+        {[...nodePositions.entries()].map(([id, pos]) => {
+          const node = nodes.get(id);
+          if (!node) return null;
+          const globalIdx = [...nodes.keys()].indexOf(id);
+          const pal = getPalette(node.paletteIdx ?? globalIdx);
+          const isDecision = node.shape === "decision";
+
+          return (
+            <g key={id}>
+              <rect
+                x={pos.x}
+                y={pos.y}
+                width={pos.width}
+                height={pos.height}
+                rx={isDecision ? 4 : 10}
+                fill={pal.bg}
+                stroke={pal.border}
+                strokeWidth="1"
+                strokeDasharray={isDecision ? "6 3" : undefined}
+              />
+              <text
+                x={pos.x + pos.width / 2}
+                y={pos.y + (node.desc ? 22 : pos.height / 2 + 5)}
+                textAnchor="middle"
+                fill={pal.text}
+                fontSize="13"
+                fontWeight="600"
+                fontFamily="'JetBrains Mono', system-ui, -apple-system, 'PingFang SC', 'Noto Sans SC', sans-serif"
+              >
+                {node.title}
+              </text>
+              {node.desc && (
+                <text
+                  x={pos.x + pos.width / 2}
+                  y={pos.y + 42}
+                  textAnchor="middle"
+                  fill="var(--text-dim, #9ca3af)"
+                  fontSize="11.5"
+                  fontFamily="system-ui, -apple-system, 'PingFang SC', 'Noto Sans SC', sans-serif"
                 >
-                  {isHorizontal ? (
-                    <>
-                      <line x1="2" y1="7" x2="16" y2="7" stroke="#475569" strokeWidth="1.5" />
-                      <polygon points="15,3 23,7 15,11" fill="#475569" />
-                    </>
-                  ) : (
-                    <>
-                      <line x1="7" y1="2" x2="7" y2="16" stroke="#475569" strokeWidth="1.5" />
-                      <polygon points="3,15 7,23 11,15" fill="#475569" />
-                    </>
-                  )}
-                </svg>
-              </div>
-            )}
-            <NodeBox node={node} pal={pal} />
-          </React.Fragment>
-        );
-      })}
+                  {node.desc}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
     </div>
   );
 }
