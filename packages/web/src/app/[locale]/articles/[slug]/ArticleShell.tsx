@@ -70,6 +70,7 @@ export default function ArticleShell({ locale, title, description, order, totalA
   const [activeId, setActiveId] = useState('');
   const [headings, setHeadings] = useState<Heading[]>([]);
   const contentRef = useRef<HTMLDivElement>(null);
+  const tocListRef = useRef<HTMLUListElement>(null);
   const activeIdRef = useRef('');
   const isClickScrolling = useRef(false);
   const headingsRef = useRef<Heading[]>([]);
@@ -150,6 +151,21 @@ export default function ArticleShell({ locale, title, description, order, totalA
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  // Auto-scroll TOC sidebar to keep active item visible, keeping it roughly 1/3 from top
+  useEffect(() => {
+    if (!activeId || !tocListRef.current) return;
+    const sidebar = tocListRef.current.closest('.toc-sidebar') as HTMLElement | null;
+    if (!sidebar) return;
+    const activeEl = tocListRef.current.querySelector(`a[href="#${CSS.escape(activeId)}"]`) as HTMLElement | null;
+    if (!activeEl) return;
+
+    const sidebarRect = sidebar.getBoundingClientRect();
+    const elRect = activeEl.getBoundingClientRect();
+    const elRelativeTop = elRect.top - sidebarRect.top + sidebar.scrollTop;
+    const targetScroll = elRelativeTop - sidebar.clientHeight * 0.3;
+    sidebar.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+  }, [activeId]);
+
   // Run scroll spy once after headings are populated
   useEffect(() => {
     if (headings.length > 0) {
@@ -197,7 +213,7 @@ export default function ArticleShell({ locale, title, description, order, totalA
       <div className="article-layout">
         <aside className="toc-sidebar">
           <div className="toc-label">{t(locale, 'article.toc')}</div>
-          <ul className="toc-list">
+          <ul className="toc-list" ref={tocListRef}>
             {headings.map((h) => (
               <li key={h.id} className="toc-item">
                 <a
