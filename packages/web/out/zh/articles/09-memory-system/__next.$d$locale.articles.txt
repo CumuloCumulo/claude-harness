@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[38995,["/claude-harness/_next/static/chunks/0xvfiegx38ro1.js","/claude-harness/_next/static/chunks/0v9m5oxcqhxz7.js"],"default"]
+3:I[306310,["/claude-harness/_next/static/chunks/0xvfiegx38ro1.js","/claude-harness/_next/static/chunks/0v9m5oxcqhxz7.js"],"default"]
+4:[]
+0:{"rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"isPartial":false,"staleTime":300,"varyParams":"$W4","buildId":"IzsC_vE6Xwpw9nyJXfgub"}
