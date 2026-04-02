@@ -22,6 +22,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout claude-code source
+        uses: actions/checkout@v4
+        with:
+          repository: ChinaSiro/claude-code-sourcemap
+          path: packages/claude-code-source/src
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
