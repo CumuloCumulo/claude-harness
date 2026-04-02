@@ -4,6 +4,7 @@ import { generateFileTree } from "./generate-file-tree.js";
 import { generateModuleStats } from "./generate-module-stats.js";
 import { generateSearchIndex } from "./generate-search-index.js";
 import { generateSourceSummary } from "./generate-source-summary.js";
+import { copySourceFiles } from "./generate-source-files.js";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
 const SOURCE_DIR = resolve(ROOT, "packages/claude-code-source/src");
@@ -32,6 +33,9 @@ async function main() {
   const publicDir = resolve(ROOT, "packages/web/public");
   await mkdir(publicDir, { recursive: true });
   await writeFile(resolve(publicDir, "search-index.json"), JSON.stringify(searchIndex));
+
+  console.log("Copying source files to public directory...");
+  await copySourceFiles();
 
   console.log("Done! Output written to packages/web/generated/");
 }

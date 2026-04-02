@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "generate": "tsx src/index.ts",
-    "download": "tsx src/download-source.ts"
+    "download": "tsx src/download-source.ts",
+    "source-files": "tsx src/generate-source-files.ts"
   },
   "dependencies": {
     "glob": "^11.0.0"

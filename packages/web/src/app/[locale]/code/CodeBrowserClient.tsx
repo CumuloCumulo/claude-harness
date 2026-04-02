@@ -5,7 +5,23 @@ import { useSearchParams } from "next/navigation";
 import { Search, ChevronDown, ChevronRight, FileText, Loader2 } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { fetchSourceCode } from "./actions";
+
+// 从 public 目录获取源代码文件
+async function fetchSourceCode(
+  filePath: string,
+): Promise<{ code: string | null; error: string | null }> {
+  try {
+    const basePath = window.location.pathname.split('/')[1] || '';
+    const response = await fetch(`/${basePath}/source/${filePath}`);
+    if (!response.ok) {
+      throw new Error(`File not found: ${filePath}`);
+    }
+    const code = await response.text();
+    return { code, error: null };
+  } catch (err) {
+    return { code: null, error: `File not found: ${filePath}` };
+  }
+}
 
 interface TreeNode {
   name: string;

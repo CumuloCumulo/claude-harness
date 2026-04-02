@@ -1,10 +1,11 @@
 {
   "name": "claude-harness",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
-    "generate": "turbo generate"
+    "generate": "pnpm --filter @claude-harness/scripts generate"
   },
   "devDependencies": {
     "next": "^16.2.2",
